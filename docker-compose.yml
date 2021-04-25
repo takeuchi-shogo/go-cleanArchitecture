@@ -13,6 +13,8 @@ services:
             - ./app:/app
         ports: 
             - 8080:8080
+        environment: 
+            MYSQL_HOST: sns_mysql
         depends_on: 
             - mysql
 
@@ -20,14 +22,13 @@ services:
         image: mysql:8
         restart: always
         container_name: sns_mysql
-        hostname: mysql
         ports:
             - 3306:3306
-        environment: 
-            MYSQL_ROOT_PASSWORD: root
+        environment:
+            MYSQL_ROOT_PASSWORD: password
             MYSQL_DATABASE: sns_sample
-            MYSQL_USER: root
-            MYSQL_PASSWORD: pass
+            MYSQL_USER: sns_test
+            MYSQL_PASSWORD: password
             TZ: 'Asia/Tokyo'
         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
         volumes:

@@ -13,7 +13,7 @@ func (repo *TweetRepository) FindAll(db *gorm.DB) (tweets []domain.Tweets, err e
 	tweets = []domain.Tweets{}
 	db.Order("ID desc").Find(&tweets)
 	if len(tweets) == 0 {
-		return []domain.Tweets{}, errors.New("まだ呟いていません")
+		return []domain.Tweets{}, errors.New("No Tweets")
 	}
 	return tweets, nil
 }
@@ -21,7 +21,7 @@ func (repo *TweetRepository) FindAll(db *gorm.DB) (tweets []domain.Tweets, err e
 func (repo *TweetRepository) FindById(db *gorm.DB, id int) (tweet domain.Tweets, err error) {
 	tweet = domain.Tweets{}
 	db.First(&tweet, id)
-	if tweet.ID <= 0 {
+	if tweet.ID == 0 {
 		return domain.Tweets{}, errors.New("この呟きは有りません")
 	}
 	return tweet, nil
