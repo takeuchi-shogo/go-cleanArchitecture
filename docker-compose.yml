@@ -11,17 +11,19 @@ services:
         tty: true #コンテナの永続化
         volumes: 
             - ./app:/app
-        ports: 
+            -  ./.bashrc:/root/.bashrc
+        ports:
             - 8080:8080
         environment: 
-            MYSQL_HOST: sns_mysql
+            MYSQL_HOST: mysql
         depends_on: 
             - mysql
+            - phpmyadmin
 
     mysql:
         image: mysql:8
         restart: always
-        container_name: sns_mysql
+        #container_name: sns_mysql
         ports:
             - 3306:3306
         environment:
@@ -32,8 +34,25 @@ services:
             TZ: 'Asia/Tokyo'
         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
         volumes:
-            - db-data:/var/lib/mysql
-            - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+            - ./mysql:/var/lib/mysql #sqlのデータ
+            - ./sql:/sql #sqlディレクトリのクエリ
+        cap_add:
+            - SYS_NICE #追加
+
+    phpmyadmin:
+        image: phpmyadmin:5
+        restart: always
+        environment:
+            - PMA_ARBITRARY=1
+            - PMA_HOST=mysql
+            - PMA_USER=sns_test
+            - PMA_PASSWORD=password
+        links:
+            - mysql
+        ports:
+            - 8000:80
+        #volumes:
+        #    - /sessions
 
 volumes:
   db-data:
