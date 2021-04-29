@@ -4,4 +4,8 @@ mysql
 
 Config.go
 
+app/bin/config
+
+app/tmp/*
+
 !.gitkeep

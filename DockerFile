@@ -1,9 +1,22 @@
+#Golang
 FROM golang:latest
-#RUN go get -u github.com/tockins/realize
+RUN go get -u github.com/cosmtrek/air && \
+  go build -o /go/bin/air github.com/cosmtrek/air && \
+  go get -u github.com/go-delve/delve/cmd/dlv && \
+  go build -o /go/bin/dlv github.com/go-delve/delve/cmd/dlv
 
-RUN mkdir /app
-WORKDIR /app
+#Nginx
+FROM nginx:1
 
-RUN go get github.com/gin-gonic/gin
-RUN go get github.com/go-sql-driver/mysql
-RUN go get github.com/jinzhu/gorm
+WORKDIR /var/www/html
+
+
+COPY --from=golang /go /go
+COPY --from=golang /usr/local/go /usr/local/go
+#ローカルのファイル を 右記(コンテナ内ファイル) にコピーする
+COPY ./app /var/www/html
+COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY ./.bashrc /root/.bashrc
+
+CMD [ "bin/dev" ]
+#CMD air -c .air.toml
