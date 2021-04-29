@@ -6,11 +6,11 @@ services:
             context: . #ビルドに使うDockerFileの場所
             dockerfile: DockerFile #DockerFileの名前
         container_name: sns_sample_api #コンテナ名
-        #command: air
+        #command: air #app/bin/dev で実行されるから無し
         stdin_open: true
         tty: true #コンテナの永続化
         volumes: 
-            - ./app:/var/www/html
+            - ./app:/var/www/html #appと言うボリュームを/var/www/htmlにマウント
             - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
             - ./.bashrc:/root/.bashrc
         #ports:
@@ -26,6 +26,8 @@ services:
             - VIRTUAL_HOST=api.sns.sample
         security_opt: 
             - apparmor:unconfied
+        cap_add:
+            - SYS_PTRACE
 
     mysql:
         image: mysql:8
