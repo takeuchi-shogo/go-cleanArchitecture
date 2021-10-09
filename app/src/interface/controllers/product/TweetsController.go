@@ -9,12 +9,17 @@ import (
 )
 
 type TweetsController struct {
-	Interactor product.TweetsInteractor
+	Token      product.UserTokenInteractor
+	Interactor product.TweetInteractor
 }
 
 func NewTweetsController(db database.DB) *TweetsController {
 	return &TweetsController{
-		Interactor: product.TweetsInteractor{
+		Token: product.UserTokenInteractor{
+			DB:        &database.DBRepository{DB: db},
+			UserToken: &database.UserTokenRepository{},
+		},
+		Interactor: product.TweetInteractor{
 			DB:    &database.DBRepository{DB: db},
 			Tweet: &database.TweetRepository{},
 		},
@@ -41,24 +46,42 @@ func (controller *TweetsController) Get(c controllers.Context) {
 }
 
 func (controller *TweetsController) Post(c controllers.Context) {
-	contents := c.PostForm("Contents")
 
-	tweet, res := controller.Interactor.Create(domain.Tweets{
+	token, res := controller.Token.Verify(c.PostForm("accessToken"))
+
+	if res.Error != nil {
+		c.JSON(res.StatusCode, controllers.NewH(res.Error.Error(), nil))
+		return
+	}
+
+	contents := c.PostForm("contents")
+
+	createTweet, res := controller.Interactor.Create(domain.Tweets{
+		UserID:   token.UserID,
 		Contents: contents,
 	})
 	if res.Error != nil {
-		c.JSON(res.StatusCode, controllers.NewH(res.Error.Error(), tweet))
+		c.JSON(res.StatusCode, controllers.NewH(res.Error.Error(), nil))
 		return
 	}
-	c.JSON(res.StatusCode, controllers.NewH(res.Error.Error(), tweet))
+	c.JSON(res.StatusCode, controllers.NewH("success", createTweet))
 }
 
 func (controller *TweetsController) Patch(c controllers.Context) {
-	id, _ := strconv.Atoi(c.Param("tweetID"))
+
+	token, res := controller.Token.Verify(c.PostForm("accessToken"))
+
+	if res.Error != nil {
+		c.JSON(res.StatusCode, controllers.NewH(res.Error.Error(), nil))
+		return
+	}
+
+	id, _ := strconv.Atoi(c.Param("id"))
 	contents := c.PostForm("contents")
 
 	updateTweet := domain.TweetsForPatch{
 		ID:       id,
+		UserID:   token.UserID,
 		Contents: contents,
 	}
 
