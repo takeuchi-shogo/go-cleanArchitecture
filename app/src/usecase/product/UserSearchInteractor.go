@@ -23,20 +23,20 @@ func (interactor *UserSearchInteracor) Get(userId int) (user domain.Users, resul
 	return user, usecase.NewResultStatus(200, nil)
 }
 
-func (interactor *UserSearchInteracor) GetList(userId int) (users domain.Users, resultStatus *usecase.ResultStatus) {
+func (interactor *UserSearchInteracor) GetList(userId int) (users []domain.Users, resultStatus *usecase.ResultStatus) {
 
 	db := interactor.DB.Connect()
 
 	user, err := interactor.User.FindById(db, userId)
 
 	if err != nil {
-		return domain.Users{}, usecase.NewResultStatus(400, err)
+		return []domain.Users{}, usecase.NewResultStatus(400, err)
 	}
 
-	// users, err := interactor.User.FindByPrefecture(db, user.Prefecture)
+	users, err = interactor.User.FindByPrefecture(db, *user.Prefecture)
 
-	// if err != nil {
-	// 	return []domain.Users{}, usecase.NewResultStatus(400, err)
-	// }
-	return user, usecase.NewResultStatus(200, nil)
+	if err != nil {
+		return []domain.Users{}, usecase.NewResultStatus(400, err)
+	}
+	return users, usecase.NewResultStatus(200, nil)
 }

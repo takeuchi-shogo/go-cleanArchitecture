@@ -45,5 +45,19 @@ func (controller *UserSearchesController) Get(c controllers.Context) {
 }
 
 func (controller *UserSearchesController) GetList(c controllers.Context) {
+	token, res := controller.Token.Verify(c.Query("accessToken"))
 
+	if res.Error != nil {
+		c.JSON(res.StatusCode, controllers.NewH(res.Error.Error(), nil))
+		return
+	}
+
+	users, res := controller.Interactor.GetList(token.UserID)
+
+	if res.Error != nil {
+		c.JSON(res.StatusCode, controllers.NewH(res.Error.Error(), nil))
+		return
+	}
+
+	c.JSON(res.StatusCode, controllers.NewH("success", users))
 }

@@ -42,6 +42,15 @@ func (repo *UserRepository) FindByUserName(db *gorm.DB, userName string) (user d
 	return user, nil
 }
 
+func (repo *UserRepository) FindByPrefecture(db *gorm.DB, prefecture string) (users []domain.Users, err error) {
+	users = []domain.Users{}
+	db.Where("prefecture = ?", prefecture).Find(&users)
+	if len(users) == 0 {
+		return []domain.Users{}, errors.New("user list is not found")
+	}
+	return users, nil
+}
+
 func (repo *UserRepository) Create(db *gorm.DB, user domain.Users) (newUser domain.Users, err error) {
 	newUser = domain.Users{}
 	newUser.ScreenName = user.ScreenName
