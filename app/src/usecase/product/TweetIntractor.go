@@ -6,16 +6,17 @@ import (
 	"sns-sample/src/usecase"
 )
 
-type TweetsInteractor struct {
+type TweetInteractor struct {
 	DB    usecase.DBRepository
 	Tweet usecase.TweetRepository
 }
 
 type TweetList struct {
-	Lists []domain.Tweets
+	Lists  []domain.Tweets `json:"lists"`
+	Cursor string          `json:"cursor"`
 }
 
-func (interactor *TweetsInteractor) GetList() (tweetList TweetList, resultStatus *usecase.ResultStatus) {
+func (interactor *TweetInteractor) GetList() (tweetList TweetList, resultStatus *usecase.ResultStatus) {
 	db := interactor.DB.Connect()
 
 	tweets := []domain.Tweets{}
@@ -39,7 +40,7 @@ func (interactor *TweetsInteractor) GetList() (tweetList TweetList, resultStatus
 	return TweetList{Lists: tweets}, usecase.NewResultStatus(200, nil)
 }
 
-func (interactor *TweetsInteractor) Get(id int) (tweet domain.Tweets, resultStatus *usecase.ResultStatus) {
+func (interactor *TweetInteractor) Get(id int) (tweet domain.Tweets, resultStatus *usecase.ResultStatus) {
 	db := interactor.DB.Connect()
 
 	foundTweet, err := interactor.Tweet.FindById(db, id)
@@ -50,7 +51,7 @@ func (interactor *TweetsInteractor) Get(id int) (tweet domain.Tweets, resultStat
 	return foundTweet, usecase.NewResultStatus(200, nil)
 }
 
-func (interactor *TweetsInteractor) Create(tweet domain.Tweets) (createTweet domain.Tweets, resultStatus *usecase.ResultStatus) {
+func (interactor *TweetInteractor) Create(tweet domain.Tweets) (createTweet domain.Tweets, resultStatus *usecase.ResultStatus) {
 	db := interactor.DB.Connect()
 
 	createTweet, err := interactor.Tweet.Create(db, tweet)
@@ -61,7 +62,7 @@ func (interactor *TweetsInteractor) Create(tweet domain.Tweets) (createTweet dom
 	return createTweet, usecase.NewResultStatus(200, nil)
 }
 
-func (interactor *TweetsInteractor) Save(newTweet domain.TweetsForPatch) (tweet domain.Tweets, resultStatus *usecase.ResultStatus) {
+func (interactor *TweetInteractor) Save(newTweet domain.TweetsForPatch) (tweet domain.Tweets, resultStatus *usecase.ResultStatus) {
 	db := interactor.DB.Connect()
 
 	patchTweet, err := interactor.Tweet.Save(db, newTweet)
@@ -72,7 +73,7 @@ func (interactor *TweetsInteractor) Save(newTweet domain.TweetsForPatch) (tweet 
 	return patchTweet, usecase.NewResultStatus(200, nil)
 }
 
-func (interactor *TweetsInteractor) Delete(id int) (resultStatus *usecase.ResultStatus) {
+func (interactor *TweetInteractor) Delete(id int) (resultStatus *usecase.ResultStatus) {
 	db := interactor.DB.Connect()
 
 	err := interactor.Tweet.Delete(db, id)
