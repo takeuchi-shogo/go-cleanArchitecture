@@ -1,11 +1,12 @@
 package product
 
 import (
+	"strconv"
+
 	"sns-sample/src/domain"
 	"sns-sample/src/interface/controllers"
 	"sns-sample/src/interface/database"
 	"sns-sample/src/usecase/product"
-	"strconv"
 )
 
 type TweetsController struct {
