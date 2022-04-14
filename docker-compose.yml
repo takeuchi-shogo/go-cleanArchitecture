@@ -15,8 +15,8 @@ services:
             - ./.bashrc:/root/.bashrc
         #ports:
         #    - 8080:8080
-        environment: 
-            MYSQL_HOST: mysql
+        # environment: 
+        #     MYSQL_HOST: mysql
         depends_on: 
             - mysql
             - phpmyadmin

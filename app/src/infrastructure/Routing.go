@@ -37,6 +37,7 @@ func (r *Routing) cors() {
 func (r *Routing) setRouting() {
 
 	MeController := product.NewMeController(r.DB)
+	DiariesController := product.NewDiariesController(r.DB)
 	TokensController := product.NewTokensController(r.DB)
 	TweetsController := product.NewTweetsController(r.DB)
 	UsersController := product.NewUsersController(r.DB)
@@ -49,6 +50,16 @@ func (r *Routing) setRouting() {
 		 * Me
 		 */
 		v1.GET("/me", func(c *gin.Context) { MeController.Get(c) })
+
+		/*
+		 * Diary
+		 */
+		v1.GET("/diaries", func(c *gin.Context) { DiariesController.GetList(c) })
+		// v1.POST("/diaries", func(c *gin.Context) { DiariesController.Post(c) })
+
+		v1.GET("/diaries/:id", func(c *gin.Context) { DiariesController.Get(c) })
+		// v1.PATCH("/diaries/:id", func(c *gin.Context) { DiariesController.Patch(c) })
+		// v1.DELETE("/diaries/:id", func(c *gin.Context) { DiariesController.Delete(c) })
 
 		/*
 		 * Tokens
