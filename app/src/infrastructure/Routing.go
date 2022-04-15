@@ -8,17 +8,19 @@ import (
 )
 
 type Routing struct {
-	DB   *DB
-	Gin  *gin.Engine
-	Port string
+	DB     *DB
+	Gin    *gin.Engine
+	Google *Google
+	Port   string
 }
 
-func NewRouting(db *DB) *Routing {
+func NewRouting(db *DB, google *Google) *Routing {
 	c := NewConfig()
 	r := &Routing{
-		DB:   db,
-		Gin:  gin.Default(),
-		Port: c.Routing.Port,
+		DB:     db,
+		Gin:    gin.Default(),
+		Google: google,
+		Port:   c.Routing.Port,
 	}
 	r.cors()
 	r.setRouting()
@@ -38,7 +40,7 @@ func (r *Routing) setRouting() {
 
 	MeController := product.NewMeController(r.DB)
 	DiariesController := product.NewDiariesController(r.DB)
-	TokensController := product.NewTokensController(r.DB)
+	TokensController := product.NewTokensController(product.TokensControllerProvider{DB: r.DB, Google: r.Google})
 	TweetsController := product.NewTweetsController(r.DB)
 	UsersController := product.NewUsersController(r.DB)
 	UserSearchesController := product.NewUserSearchesController(r.DB)
@@ -66,6 +68,7 @@ func (r *Routing) setRouting() {
 		 */
 		v1.POST("/tokens", func(c *gin.Context) { TokensController.Post(c) })
 		v1.POST("/tokens/refresh", func(c *gin.Context) { TokensController.PostRefresh(c) })
+		v1.POST("/tokens/google", func(c *gin.Context) { TokensController.PostGoogle(c) })
 
 		/*
 		 * Tweets
