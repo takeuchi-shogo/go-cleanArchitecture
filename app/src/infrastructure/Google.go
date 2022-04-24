@@ -27,7 +27,7 @@ func newGoogle(c *Config) *Google {
 			Scopes: []string{
 				"openid",
 			},
-			RedirectURL: "http://sns.sample/auth/callback/google",
+			RedirectURL: "http://localhost:8080/auth/callback/google",
 		},
 	}
 

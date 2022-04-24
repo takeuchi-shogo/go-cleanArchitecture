@@ -67,7 +67,7 @@ func (r *Routing) setRouting() {
 		/*
 		 * OAuth
 		 */
-		v1.GET("/oauth/google", func(c *gin.Context) { OAuthController.GetGoogle(c) })
+		v1.POST("/oauth/google", func(c *gin.Context) { OAuthController.GetGoogle(c) })
 
 		/*
 		 * Tokens
