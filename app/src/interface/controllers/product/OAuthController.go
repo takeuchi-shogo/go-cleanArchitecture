@@ -1,6 +1,7 @@
 package product
 
 import (
+	"sns-sample/src/domain"
 	"sns-sample/src/interface/controllers"
 	"sns-sample/src/interface/database"
 	"sns-sample/src/interface/gateways"
@@ -19,15 +20,18 @@ type OAuthControllerProvider struct {
 func NewOAuthController(p OAuthControllerProvider) *OAuthController {
 	return &OAuthController{
 		Interactor: product.OAuthInteractor{
-			DB:     &database.DBRepository{DB: p.DB},
-			Google: &gateways.GoogleGateway{Google: p.Google},
+			DB:         &database.DBRepository{DB: p.DB},
+			Google:     &gateways.GoogleGateway{Google: p.Google},
+			StateToken: &database.StateTokenRepository{},
 		},
 	}
 }
 
 func (controller *OAuthController) GetGoogle(c controllers.Context) {
 
-	google, res := controller.Interactor.GetByGoogle()
+	google, res := controller.Interactor.GetByGoogle(domain.StateTokens{
+		ApplicationName: "google",
+	})
 	if res.Error != nil {
 		c.JSON(res.StatusCode, controllers.NewH(res.Error.Error(), nil))
 		return
