@@ -1,6 +1,6 @@
 package usecase
 
 type GoogleGateway interface {
-	GetClientID() (clientID string)
+	GetLoginURL(state string) (clientID string)
 	GetUserID(code string) (googleUserID string, err error)
 }

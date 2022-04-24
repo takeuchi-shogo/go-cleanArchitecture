@@ -40,6 +40,7 @@ func (r *Routing) setRouting() {
 
 	MeController := product.NewMeController(r.DB)
 	DiariesController := product.NewDiariesController(r.DB)
+	OAuthController := product.NewOAuthController(product.OAuthControllerProvider{DB: r.DB, Google: r.Google})
 	TokensController := product.NewTokensController(product.TokensControllerProvider{DB: r.DB, Google: r.Google})
 	TweetsController := product.NewTweetsController(r.DB)
 	UsersController := product.NewUsersController(r.DB)
@@ -62,6 +63,11 @@ func (r *Routing) setRouting() {
 		v1.GET("/diaries/:id", func(c *gin.Context) { DiariesController.Get(c) })
 		// v1.PATCH("/diaries/:id", func(c *gin.Context) { DiariesController.Patch(c) })
 		// v1.DELETE("/diaries/:id", func(c *gin.Context) { DiariesController.Delete(c) })
+
+		/*
+		 * OAuth
+		 */
+		v1.GET("/oauth/google", func(c *gin.Context) { OAuthController.GetGoogle(c) })
 
 		/*
 		 * Tokens

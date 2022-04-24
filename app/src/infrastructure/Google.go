@@ -3,7 +3,6 @@ package infrastructure
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"golang.org/x/oauth2"
 	googleOAuth "golang.org/x/oauth2/google"
@@ -25,8 +24,10 @@ func newGoogle(c *Config) *Google {
 			ClientID:     c.Google.ClientID,
 			ClientSecret: c.Google.ClientSecret,
 			Endpoint:     googleOAuth.Endpoint,
-			Scopes:       []string{"openid"},
-			RedirectURL:  "http://localhost:8080/auth/callback/google",
+			Scopes: []string{
+				"openid",
+			},
+			RedirectURL: "http://sns.sample/auth/callback/google",
 		},
 	}
 
@@ -37,13 +38,11 @@ func newGoogle(c *Config) *Google {
 	return google
 }
 
-func (g *Google) GetClientID() (clientID string) {
-	return g.Config.ClientID
+func (g *Google) GetLoginURL(state string) (clientID string) {
+	return g.Config.AuthCodeURL(state)
 }
 
 func (g *Google) GetUserID(code string) (googleUserID string, err error) {
-
-	fmt.Println("aaaaa: ", g.Config.AuthCodeURL(""))
 
 	cxt := context.Background()
 
@@ -53,21 +52,16 @@ func (g *Google) GetUserID(code string) (googleUserID string, err error) {
 	}
 
 	client := g.Config.Client(cxt, httpClient)
-	// userInfo, err := client.Get("https://www.googleapis.com/oauth2/v3/userinfo")
-	// if err != nil {
-	// 	return "", errors.New("接続エラー")
-	// }
-	service, _ := v2.New(client)
+
+	service, err := v2.New(client)
 	if err != nil {
 		return "", errors.New("接続エラー")
 	}
 
-	userInfo, _ := service.Tokeninfo().AccessToken(httpClient.AccessToken).Context(cxt).Do()
+	userInfo, err := service.Tokeninfo().AccessToken(httpClient.AccessToken).Context(cxt).Do()
 	if err != nil {
 		return "", errors.New("接続エラー")
 	}
-
-	// user, err := service.TokenInfo().AccessToken(httpClient.AccessToken).Context().Do()
 
 	return userInfo.UserId, nil
 }
