@@ -54,6 +54,20 @@ CREATE TABLE `user_tokens` (
 -- -------------------------------------------------------------------------
 
 --
+-- テーブルの構造 `state_tokens`
+--
+
+CREATE TABLE `state_tokens` (
+    `id` int(10) UNSIGNED NOT NULL,
+    `application_name` varchar(50) NOT NULL,,
+    `state_token` varchar(50) NOT NULL,
+    `expire_at` int(10) UNSIGNED NOT NULL,
+    `created_at`int(10) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- -------------------------------------------------------------------------
+
+--
 -- テーブルの構造 `tweets`
 --
 
@@ -84,6 +98,12 @@ ALTER TABLE `user_tokens`
   ADD PRIMARY KEY (`id`);
 
 --
+-- テーブルのインデックス `state_tokens`
+--
+ALTER TABLE `state_tokens`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- テーブルのインデックス `tweets`
 --
 ALTER TABLE `tweets`
@@ -105,6 +125,12 @@ ALTER TABLE `users`
 -- テーブルのAUTO_INCREMENT `user_tokens`
 --
 ALTER TABLE `user_tokens`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- テーブルのAUTO_INCREMENT `state_tokens`
+--
+ALTER TABLE `state_tokens`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
