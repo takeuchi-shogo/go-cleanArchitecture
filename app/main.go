@@ -5,9 +5,11 @@ import (
 )
 
 func main() {
+	config := infrastructure.NewConfig()
 	db := infrastructure.NewDB()
+	google := infrastructure.NewGoogle(config)
 
-	r := infrastructure.NewRouting(db)
+	r := infrastructure.NewRouting(db, google)
 
 	r.Run(r.Port)
 }
