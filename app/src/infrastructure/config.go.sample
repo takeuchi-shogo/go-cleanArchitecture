@@ -1,0 +1,43 @@
+package infrastructure
+
+type Config struct {
+	AbsolutePath string
+	CORS         struct {
+		AllowOrigins []string
+	}
+	DB struct {
+		Production struct {
+			Host     string
+			Username string
+			Password string
+			DBName   string
+		}
+	}
+	Routing struct {
+		Port string
+	}
+	Google struct {
+		ClientID     string
+		ClientSecret string
+	}
+}
+
+func NewConfig() *Config {
+	c := new(Config)
+
+	c.AbsolutePath = "/var/www/html"
+
+	c.CORS.AllowOrigins = []string{"http://sns.sample"}
+
+	c.DB.Production.Host = "DB host"
+	c.DB.Production.Username = "your user name"
+	c.DB.Production.Password = "your password"
+	c.DB.Production.DBName = "your product DB name"
+
+	c.Google.ClientID = "your google clientID"
+	c.Google.ClientSecret = "your google client secret"
+
+	c.Routing.Port = ":8080"
+
+	return c
+}
